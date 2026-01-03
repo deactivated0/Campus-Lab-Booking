@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SweetAlert2 input visibility: ensure selects and inputs are readable in dark themed modals */
+.swal2-popup .swal2-input,
+.swal2-popup select.swal2-input {
+  color: #0b0e14 !important; /* dark text */
+  background: #ffffff !important; /* white background for good contrast */
+}
+
+/* Ensure option text is readable in selects */
+.swal2-popup select.swal2-input option {
+  color: #0b0e14;
+}
+
+/* Social auth buttons */
+.social-btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm w-full border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500;
+}
+.social-btn svg { width: 1rem; height: 1rem; flex: 0 0 1rem; }
+.social-btn .label { @apply font-medium; }
+.social-btn--github { background: #0b0e14; color: #fff; border-color: transparent; }
+.social-btn--google { background: #fff; color: #000; border-color: #e5e7eb; }
+.social-btn--facebook { background: #1877F2; color: #fff; }
+.social-btn--twitter { background: #1DA1F2; color: #fff; }
+.social-btn--apple { background: #000; color: #fff; }
+
+/* Make social buttons stack nicely on small screens and remain inline on larger screens */
+.auth-social-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 640px) {
+  .auth-social-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
