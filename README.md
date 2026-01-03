@@ -1,183 +1,121 @@
 ## Campus Lab Booking
 
-A Laravel 12 backend with an Inertia + Vue 3 frontend for booking labs and equipment. The app issues time-limited QR tokens for tablet kiosks and records automated usage logs.
+This project is a simple system for booking labs and equipment. It includes a Laravel backend (API + web) and a modern frontend built with Inertia + Vue 3. Students can request bookings, lab staff can approve them, and the system can generate short-lived QR tokens used by tablet kiosks to check users in and record automated usage logs.
+
+If you landed here and want to run the app locally, the Quick Start below walks you through the minimum steps.
 
 ---
 
-## Table of contents
-- Features
-- Repo layout
-- Requirements
-- Local setup
-- Database dump (MySQL)
-- Running tests
-- Environment & configuration
-- Optional/extension tasks
-- Third‑party libraries
-- Contributing
-- License
+## Quick Start (for newcomers)
 
----
-
-## Features
-- User authentication (Laravel auth + Google Socialite)
-- Role‑based authorization (Admin, LabStaff, Student) via Spatie permissions
-- Lab and equipment booking with calendar UI
-- Time‑limited QR tokens for kiosk check‑in
-- Automated usage logging from kiosks
-- Usage exports (CSV; optional Maatwebsite Excel integration)
-- Frontend built with Inertia + Vue 3, Tailwind, FullCalendar, charts, and QR libraries
-
----
-
-## Repo layout
-- routes/
-  - web.php
-  - auth.php
-- app/Http/Controllers/ — backend controllers (BookingController, KioskController, DashboardController, etc.)
-- app/Models/ — User, Booking, Equipment, Lab, QRToken, UsageLog
-- app/Exports/UsageLogsExport.php
-- resources/js/ — Inertia + Vue pages and components
-- database/ — migrations, seeders
-- tests/ — (not included by default)
-
----
-
-## Requirements
-- PHP >= 8.2
-- Composer
-- Node.js 16+ and npm
-- MySQL (project uses a local project database by default) — Laragon recommended on Windows
-
----
-
-## Local setup
-
-1. Clone the repo and enter the project directory.
+1. Clone the repository and change into the project folder:
+   ```bash
+   git clone https://github.com/deactivated0/Campus-Lab-Booking.git
+   cd Campus-Lab-Booking
+   ```
 
 2. Install PHP dependencies:
-   ```
+   ```bash
    composer install
    ```
 
-3. Install JS dependencies and build:
-   ```
-   npm ci
-   npm run dev
-   ```
-
-4. Copy and configure environment:
-   ```
+3. Copy the example environment file and set your database and app URL:
+   ```bash
    cp .env.example .env
-   # Edit .env: set DB_DATABASE, DB_USERNAME, DB_PASSWORD, APP_URL and other values
+   # Edit .env and set DB_DATABASE, DB_USERNAME, DB_PASSWORD, APP_URL, etc.
    php artisan key:generate
    ```
 
-5. Create the database (manually or via your DB tool) and run migrations and seeders:
+4. Install JavaScript dependencies and start the dev frontend (or build for production):
+   ```bash
+   npm ci
+   npm run dev    # development (live reload)
+   # or
+   npm run build  # production build
    ```
+
+5. Create the database and run migrations + seeders:
+   ```bash
+   # Ensure your DB exists and credentials in .env are correct
    php artisan migrate --force
    php artisan db:seed
    ```
 
-6. Start the Laravel dev server:
-   ```
+6. Start the Laravel server and open the app in your browser:
+   ```bash
    php artisan serve --host=127.0.0.1 --port=8000
+   # Visit: http://127.0.0.1:8000
    ```
-   Open APP_URL in your browser.
+
+Notes for Windows users: Laragon is a convenient local stack for running PHP + MySQL on Windows. If you prefer Laragon, create a project database in the Laragon MySQL panel and update `.env` accordingly.
 
 ---
 
-## MySQL dump (full: structure, data, triggers, routines, events)
+## What this repo contains (short)
 
-Create a full dump locally (replace credentials as needed).
+- `app/` — Laravel backend code (controllers, models, providers)
+- `resources/js/` — Inertia + Vue pages and components (frontend)
+- `routes/` — Route definitions
+- `database/` — migrations and seeders
+- `public/` — compiled frontend assets and entry point
 
-If mysqldump is in your PATH:
-```
+---
+
+## Running in development
+
+- Backend: `php artisan serve`
+- Frontend (dev): `npm run dev` (starts Vite with live reload)
+- To rebuild production assets: `npm run build`
+
+If you use Docker, put the usual services up (PHP, MySQL) and point the `.env` values at them.
+
+---
+
+## Database export / import (MySQL)
+
+Create a full dump locally (example):
+
+```bash
 mysqldump -u root -p --single-transaction --routines --events --triggers project > database/project_dump.sql
-```
-
-Laragon/Windows example (adjust path):
-```
-& 'C:\laragon\bin\mysql\mysql-8.0.33\bin\mysqldump.exe' -u root -p --single-transaction --routines --events --triggers project > database/project_dump.sql
-```
-
-Compress:
-```
 gzip -c database/project_dump.sql > database/project_dump.sql.gz
 ```
 
-Note: Run the dump locally and add database/project_dump.sql to the repo if you want it included.
+Windows (Laragon) example:
 
----
-
-## Running tests
-No tests are included by default. Recommended workflow:
-- Add Feature and Unit tests under tests/
-- Run:
-  ```
-  php artisan test
-  ```
-
----
-
-## Environment & configuration notes
-- Broadcasting (real‑time dashboards): set BROADCAST_CONNECTION (pusher or redis) and configure Laravel Echo on the frontend.
-- Email: set SMTP in .env for production (default MAIL_MAILER=log).
-- Permissions: Spatie roles and permissions are wired into routes via middleware.
-- Exports: UsageLogsExport supports Maatwebsite Excel (optional). Fallback CSV export exists.
-
----
-
-## Optional / Missing items
-- README: this file (polished)
-- Database dump: add database/project_dump.sql from a local mysqldump
-- Tests: add tests/Feature and tests/Unit
-- Real‑time updates: enable broadcasting and configure Echo
-- Audit logs: consider spatie/laravel-activitylog for admin audit trails
-- Install Maatwebsite Excel for richer export formats (see below)
-
-Enable Maatwebsite Excel exporter (optional):
-```
-composer require maatwebsite/excel
-php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" # optional
+```powershell
+& 'C:\\laragon\\bin\\mysql\\mysql-8.0.33\\bin\\mysqldump.exe' -u root -p --single-transaction --routines --events --triggers project > database/project_dump.sql
 ```
 
 ---
 
-## Third‑party libraries (high level)
-Composer:
-- inertiajs/inertia-laravel
-- laravel/socialite
-- spatie/laravel-permission
-- tightenco/ziggy
+## Tests
 
-NPM:
-- vue, @inertiajs/vue3
-- tailwindcss
-- @fullcalendar/*
-- html5-qrcode, qrcode
-- vuedraggable
-- chart.js, vue-chartjs
-- sweetalert2
+There are no tests by default. To run tests (once you add them):
+
+```bash
+php artisan test
+```
+
+---
+
+## Configuration notes
+
+- Permissions/roles are handled by `spatie/laravel-permission` (Admin, LabStaff, Student).
+- QR tokens: short-lived tokens are created for kiosks and expire automatically.
+- Email and broadcasting settings rely on `.env` configuration.
 
 ---
 
 ## Contributing
-- Fork the repo, create a feature branch, open a PR with a clear description.
-- Add tests for new features/bug fixes.
-- Keep migrations and seeders in sync.
+
+If you want to contribute, fork the repo, create a branch, and open a pull request with a clear description of your change. Adding tests for new features is encouraged.
 
 ---
 
 ## License
-Specify project license (add LICENSE file if needed).
 
----
+Add a `LICENSE` file to choose a license for this project.
 
-If you want, I can:
-- Add this README to the repo (commit + PR),
-- Generate a CONTRIBUTING.md or CHANGELOG.md,
-- Create a basic tests scaffold (Feature examples). Which should I do next?
 
 # Campus Lab Booking (Project)
 
